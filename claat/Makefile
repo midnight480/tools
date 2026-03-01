@@ -20,6 +20,7 @@ OUTDIRNAME := bin
 OUTDIR := ./$(OUTDIRNAME)
 OUTRELEASE := gs://claat
 RELEASES=$(OUTDIR)/claat-darwin-amd64 \
+	 $(OUTDIR)/claat-darwin-arm64 \
 	 $(OUTDIR)/claat-linux-amd64 \
 	 $(OUTDIR)/claat-linux-386 \
 	 $(OUTDIR)/claat-windows-amd64.exe \

@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
 
@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-    - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+    - uses: actions/checkout@v4
 
     - name: Set up Go
-      uses: actions/setup-go@37335c7bb261b353407cff977110895fa0b4f7d8
+      uses: actions/setup-go@v5
       with:
-        go-version: 1.16
+        go-version: '1.22'
 
     - name: Vet
       working-directory: claat
@@ -30,3 +30,10 @@ jobs:
     - name: Test
       working-directory: claat
       run: go test -v ./...
+
+    - name: Install govulncheck
+      run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+    - name: Vulnerability Check
+      working-directory: claat
+      run: govulncheck ./...
