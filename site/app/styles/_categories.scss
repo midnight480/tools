@@ -16,11 +16,11 @@
 
 /* Google colors */
 
-$color-google-blue:  #4285f4;
-$color-google-red:  #ea4335;
-$color-google-yellow:  #fbbc05;
-$color-google-green:  #34a853;
-$color-google-grey:  #9aa0a6;
+$color-google-blue: #4285f4;
+$color-google-red: #ea4335;
+$color-google-yellow: #fbbc05;
+$color-google-green: #34a853;
+$color-google-grey: #9aa0a6;
 
 /* Other colors */
 
@@ -47,29 +47,34 @@ $color-weave-green: #0f9d58;
 /* Mixins */
 
 @mixin codelab-card($categories, $color, $icon) {
-  %bg-#{$color} {
+  $color-str: inspect($color);
+  $color-id: if(str-index($color-str, '#')==1, str-slice($color-str, 2), $color-str);
+
+  $icon-id: if(str-index($icon, '.') !=null, str-slice($icon, 1, str-index($icon, '.') - 1), $icon);
+
+  %bg-#{$color-id} {
     background-color: $color;
   }
 
-  %border-#{$color} {
+  %border-#{$color-id} {
     border-bottom-color: $color;
   }
 
-  %icon-#{$icon} {
+  %icon-#{$icon-id} {
     background-image: url('/images/icons/#{$icon}');
   }
 
   @each $category in $categories {
     .codelab-card.category-#{$category} {
-      @extend %border-#{$color};
+      @extend %border-#{$color-id};
     }
 
     .#{$category}-bg {
-      @extend %bg-#{$color};
+      @extend %bg-#{$color-id};
     }
 
     .#{$category}-icon {
-      @extend %icon-#{$icon};
+      @extend %icon-#{$icon-id};
     }
   }
 }
@@ -92,7 +97,7 @@ $color-weave-green: #0f9d58;
 @include codelab-card(['android-things'],
   $color-android-things-grey, 'android-things.svg');
 @include codelab-card(['android-wear'],
-$color-google-blue, 'wear-os.svg');
+  $color-google-blue, 'wear-os.svg');
 
 @include codelab-card(['assistant'],
   $color-google-blue, 'google-assistant.svg');
@@ -167,7 +172,7 @@ $color-google-blue, 'wear-os.svg');
   $color-firebase-orange, 'firebase.svg');
 
 @include codelab-card(['flutter', 'flutter-firebase',
-                       'flutter-android', 'design-flutter'],
+  'flutter-android', 'design-flutter'],
   $color-flutter-blue, 'flutter.svg');
 
 @include codelab-card(['google-maps', 'googlemaps', 'maps', 'geo'],
@@ -192,7 +197,7 @@ $color-google-blue, 'wear-os.svg');
   $color-unity-grey, 'unity.svg');
 
 @include codelab-card(['weave'],
-$color-weave-green, 'weave.svg');
+  $color-weave-green, 'weave.svg');
 
 @include codelab-card(['wear', 'wear-os'],
   $color-google-blue, 'wear-os.svg');

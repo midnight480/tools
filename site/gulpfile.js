@@ -13,7 +13,7 @@ const htmlmin = require('gulp-htmlmin');
 const merge = require('merge-stream');
 const postcss = require('gulp-html-postcss');
 const rename = require('gulp-rename');
-const sass = require('gulp-sass');
+const sass = require('gulp-sass')(require('sass'));
 const through = require('through2');
 const useref = require('gulp-useref');
 const vulcanize = require('gulp-vulcanize');
@@ -92,18 +92,18 @@ const VIEWS_FILTER = args.viewsFilter || '*';
 
 // clean:build removes the build directory
 gulp.task('clean:build', (callback) => {
-  return del('build')
+  return del.deleteAsync('build')
 });
 
 // clean:dist removes the dist directory
 gulp.task('clean:dist', (callback) => {
-  return del('dist')
+  return del.deleteAsync('dist')
 });
 
 // clean:js removes the built javascript
 // NOTE: this is not included in the default 'clean' task
 gulp.task('clean:js', (callback) => {
-  return del('app/js/bundle')
+  return del.deleteAsync('app/js/bundle')
 });
 
 // clean removes all built files
@@ -723,7 +723,7 @@ const filterCodelabs = (view, codelabs) => {
   // Filter out codelabs with tags that don't intersect with view.tags
   // unless view.tags is empty - equivalent to any tag.
   // Same for categories.
-  codelabs = codelabs.filter(function(codelab) {
+  codelabs = codelabs.filter(function (codelab) {
     // Matches by default if both tags and cats are empty.
     var match = !vtags.length && !vcats.length;
     var ctags = cleanStringList(codelab.tags);
@@ -808,15 +808,15 @@ const cleanStringList = (a) => {
 // sortCodelabs reorders codelabs array in-place for the given view. Pinned
 // codelabs always come first, sorted by their pin index.
 const sortCodelabs = (codelabs, view) => {
-  let attr = function(codelab) {
+  let attr = function (codelab) {
     return levelledCategory(codelab, view.catLevel).name;
   }
 
   if (view.sort !== "mainCategory") {
-    attr = function(codelab) { return codelab[view.sort] };
+    attr = function (codelab) { return codelab[view.sort] };
   }
 
-  codelabs.sort(function(a, b) {
+  codelabs.sort(function (a, b) {
     // Move pinned codelabs to the top.
     var ia = view.pins.indexOf(a.id);
     var ib = view.pins.indexOf(b.id);
@@ -842,7 +842,7 @@ const sortCodelabs = (codelabs, view) => {
 // expression or view regular expression into the build/ folder. If no filters
 // are specified (i.e. if codelabRe and viewRe are both undefined), then this
 // function returns all codelabs in the codelabs directory.
-const copyFilteredCodelabs = (dest) =>  {
+const copyFilteredCodelabs = (dest) => {
   // No filters were specified, symlink the codelabs folder directly and save
   // processing.
   if (CODELABS_FILTER === '*' && VIEWS_FILTER === '*') {
@@ -854,7 +854,7 @@ const copyFilteredCodelabs = (dest) =>  {
 
   const codelabs = collectCodelabs();
 
-  for(let i = 0; i < codelabs.length; i++) {
+  for (let i = 0; i < codelabs.length; i++) {
     const codelab = codelabs[i];
     const source = path.join(CODELABS_DIR, codelab.id);
     const target = path.join(dest, CODELABS_NAMESPACE, codelab.id);
@@ -894,7 +894,7 @@ const collectCodelabs = () => {
 
     // Iterate over each view and include codelabs for that view.
     let s = new Set();
-    for(let i = 0; i < views.length; i++) {
+    for (let i = 0; i < views.length; i++) {
       let filtered = filterCodelabs(views[i], codelabs).codelabs;
       s.add(...filtered);
     }
