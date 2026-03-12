@@ -1,5 +1,20 @@
 # Tools for authoring and serving codelabs
 
+> [!IMPORTANT]
+> ## About This Fork
+>
+> This repository is a fork of the original [googlecodelabs/tools](https://github.com/googlecodelabs/tools),
+> which has been **archived** by Google and is no longer actively maintained.
+>
+> As someone who has great respect for the CLaaT (Codelabs as a Thing) project and its contributions
+> to developer education, I have forked this repository to keep it available and operational.
+>
+> **Maintenance Policy:**
+> - **No new features** are planned at this time.
+> - **Security vulnerabilities** and related issues will be addressed on a best-effort basis to keep the tool safe and usable.
+>
+> If you encounter any security concerns, please feel free to open an issue.
+
 Codelabs are interactive instructional tutorials, which can be authored in Google Docs
 using some simple formatting conventions. You can also author codelabs using markdown syntax.
 This repo contains all the tools and documentation you’ll need for building and publishing
