@@ -1,0 +1,220 @@
+[24:09:42] Using gulpfile ~/src/tools/site/gulpfile.js
+[24:09:42] Starting 'build'...
+[24:09:42] Starting 'clean'...
+[24:09:42] Starting 'clean:build'...
+[24:09:42] Starting 'clean:dist'...
+[24:09:42] Finished 'clean:dist' after 54 ms
+[24:09:42] Finished 'clean:build' after 73 ms
+[24:09:42] Finished 'clean' after 83 ms
+[24:09:42] Starting 'build:codelabs'...
+[24:09:42] Finished 'build:codelabs' after 3.49 ms
+[24:09:42] Starting 'build:css'...
+[24:09:43] Finished 'build:css' after 118 ms
+[24:09:43] Starting 'build:scss'...
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+17 │ @import "_layout";
+   │         ^^^^^^^^^
+   ╵
+    app/styles/main.scss 17:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+18 │ @import "_typography";
+   │         ^^^^^^^^^^^^^
+   ╵
+    app/styles/main.scss 18:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+20 │ @import "_app";
+   │         ^^^^^^
+   ╵
+    app/styles/main.scss 20:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+21 │ @import "_toolbar";
+   │         ^^^^^^^^^^
+   ╵
+    app/styles/main.scss 21:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+22 │ @import "_codelab-card";
+   │         ^^^^^^^^^^^^^^^
+   ╵
+    app/styles/main.scss 22:9  root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+47 │ $textColor: lighten(#000, 20%);
+   │             ^^^^^^^^^^^^^^^^^^
+   ╵
+    app/styles/_variables.scss 47:13  @import
+    app/styles/_app.scss 17:9         @import
+    app/styles/main.scss 20:9         root stylesheet
+
+DEPRECATION WARNING [color-functions]: lighten() is deprecated. Suggestions:
+
+color.scale($color, $lightness: 20%)
+color.adjust($color, $lightness: 20%)
+
+More info: https://sass-lang.com/d/color-functions
+
+   ╷
+47 │ $textColor: lighten(#000, 20%);
+   │             ^^^^^^^^^^^^^^^^^^
+   ╵
+    app/styles/_variables.scss 47:13  @import
+    app/styles/_app.scss 17:9         @import
+    app/styles/main.scss 20:9         root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+51 │ $helperTextColor: lighten(#000, 56%);
+   │                   ^^^^^^^^^^^^^^^^^^
+   ╵
+    app/styles/_variables.scss 51:19  @import
+    app/styles/_app.scss 17:9         @import
+    app/styles/main.scss 20:9         root stylesheet
+
+DEPRECATION WARNING [color-functions]: lighten() is deprecated. Suggestions:
+
+color.scale($color, $lightness: 56%)
+color.adjust($color, $lightness: 56%)
+
+More info: https://sass-lang.com/d/color-functions
+
+   ╷
+51 │ $helperTextColor: lighten(#000, 56%);
+   │                   ^^^^^^^^^^^^^^^^^^
+   ╵
+    app/styles/_variables.scss 51:19  @import
+    app/styles/_app.scss 17:9         @import
+    app/styles/main.scss 20:9         root stylesheet
+
+DEPRECATION WARNING [if-function]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass(str-index($color-str, "#") == 1): str-slice($color-str, 2); else: $color-str)
+
+More info: https://sass-lang.com/d/if-function
+
+   ╷
+51 │   $color-id: if(str-index($color-str, '#')==1, str-slice($color-str, 2), $color-str);
+   │              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   ╵
+    app/styles/_categories.scss 51:14   @import
+    app/styles/_codelab-card.scss 18:9  @import
+    app/styles/main.scss 22:9           root stylesheet
+
+DEPRECATION WARNING [if-function]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass(str-index($icon, ".") != null): str-slice($icon, 1, str-index($icon, ".") - 1); else: $icon)
+
+More info: https://sass-lang.com/d/if-function
+
+   ╷
+53 │   $icon-id: if(str-index($icon, '.') !=null, str-slice($icon, 1, str-index($icon, '.') - 1), $icon);
+   │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   ╵
+    app/styles/_categories.scss 53:13   @import
+    app/styles/_codelab-card.scss 18:9  @import
+    app/styles/main.scss 22:9           root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use meta.inspect instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+50 │   $color-str: inspect($color);
+   │               ^^^^^^^^^^^^^^^
+   ╵
+    app/styles/_categories.scss 50:15   codelab-card()
+    app/styles/_categories.scss 84:1    @import
+    app/styles/_codelab-card.scss 18:9  @import
+    app/styles/main.scss 22:9           root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use string.index instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+51 │   $color-id: if(str-index($color-str, '#')==1, str-slice($color-str, 2), $color-str);
+   │                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   ╵
+    app/styles/_categories.scss 51:17   codelab-card()
+    app/styles/_categories.scss 84:1    @import
+    app/styles/_codelab-card.scss 18:9  @import
+    app/styles/main.scss 22:9           root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use string.slice instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+51 │   $color-id: if(str-index($color-str, '#')==1, str-slice($color-str, 2), $color-str);
+   │                                                ^^^^^^^^^^^^^^^^^^^^^^^^
+   ╵
+    app/styles/_categories.scss 51:48   codelab-card()
+    app/styles/_categories.scss 84:1    @import
+    app/styles/_codelab-card.scss 18:9  @import
+    app/styles/main.scss 22:9           root stylesheet
+
+DEPRECATION WARNING [slash-div]: Using / for division outside of calc() is deprecated and will be removed in Dart Sass 2.0.0.
+
+Recommendation: math.div($keyline, 2) or calc($keyline / 2)
+
+More info and automated migrator: https://sass-lang.com/d/slash-div
+
+   ╷
+48 │     margin-right: $keyline / 2;
+   │                   ^^^^^^^^^^^^
+   ╵
+    app/styles/_codelab-card.scss 48:19  @import
+    app/styles/main.scss 22:9            root stylesheet
+
+WARNING: 11 repetitive deprecation warnings omitted.
+
+[24:09:52] Finished 'build:scss' after 9.3 s
+[24:09:52] Starting 'build:html'...
+[24:09:53] Finished 'build:html' after 941 ms
+[24:09:53] Starting 'build:images'...
+[24:09:58] Finished 'build:images' after 4.95 s
+[24:09:58] Starting 'build:js'...
+[24:11:08] Finished 'build:js' after 1.17 min
+[24:11:08] Starting 'build:elements_js'...
+[24:11:08] Finished 'build:elements_js' after 593 ms
+[24:11:08] Starting 'build:vulcanize'...
+[24:11:33] Finished 'build:vulcanize' after 25 s
+[24:11:33] Finished 'build' after 1.85 min
