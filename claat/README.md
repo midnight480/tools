@@ -14,7 +14,7 @@ The binaries, as well as their checksums are available at the
 
 Alternatively, if you have [Go installed](https://golang.org/doc/install):
 
-    go install github.com/googlecodelabs/tools/claat@latest
+    go install github.com/midnight480/tools/claat@latest
 
 If none of the above works, compile the tool from source following Dev workflow
 instructions below.

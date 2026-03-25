@@ -23,7 +23,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/googlecodelabs/tools/claat/nodes"
+	"github.com/midnight480/tools/claat/nodes"
 )
 
 // TODO: render HTML using golang/x/net/html or template.
