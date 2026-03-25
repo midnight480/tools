@@ -48,5 +48,5 @@ func isStdout(filename string) bool {
 // codelabDir returns codelab root directory.
 // The base argument is codelab parent directory.
 func codelabDir(base string, m *types.Meta) string {
-	return filepath.Join(base, m.ID)
+	return filepath.Join(base, "web")
 }
