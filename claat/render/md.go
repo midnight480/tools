@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/googlecodelabs/tools/claat/nodes"
+	"github.com/midnight480/tools/claat/nodes"
 )
 
 // MD renders nodes as markdown for the target env.

@@ -1,4 +1,4 @@
-module github.com/googlecodelabs/tools/claat
+module github.com/midnight480/tools/claat
 
 go 1.25.0
 

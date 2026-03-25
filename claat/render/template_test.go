@@ -18,8 +18,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/googlecodelabs/tools/claat/nodes"
-	"github.com/googlecodelabs/tools/claat/types"
+	"github.com/midnight480/tools/claat/nodes"
+	"github.com/midnight480/tools/claat/types"
 )
 
 func TestExecuteBuiltin(t *testing.T) {
