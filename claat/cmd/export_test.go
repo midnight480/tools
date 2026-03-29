@@ -73,7 +73,7 @@ func TestExportCodelabMemory(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			generatedFolder := path.Join(tmp, wantMeta.ID)
+			generatedFolder := path.Join(tmp, "web")
 			files, err := ioutil.ReadDir(generatedFolder)
 			if err != nil {
 				t.Fatal(err)
@@ -84,7 +84,7 @@ func TestExportCodelabMemory(t *testing.T) {
 				t.Logf("Name: %s, IsDir: %v, Size: %d", f.Name(), f.IsDir(), f.Size())
 			}
 
-			wantBytes, err := ioutil.ReadFile(path.Join(tmp, wantMeta.ID, "index.html"))
+			wantBytes, err := ioutil.ReadFile(path.Join(tmp, "web", "index.html"))
 			if err != nil {
 				t.Fatal(err)
 			}
