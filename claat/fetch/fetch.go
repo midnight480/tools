@@ -19,9 +19,8 @@ import (
 	"fmt"
 	"hash/crc64"
 	"io"
-	"io/ioutil"
 	"math"
-	"math/rand"
+	"math/rand/v2"
 	"net/http"
 	"net/url"
 	"os"
@@ -282,7 +281,7 @@ func (f *Fetcher) slurpBytes(codelabSrc, dir, imgURL string, imgBytes []byte) (s
 			if imgURL, err = restrictPathToParent(imgURL, filepath.Dir(codelabSrc)); err != nil {
 				return "", err
 			}
-			if b, err = ioutil.ReadFile(imgURL); err != nil {
+			if b, err = os.ReadFile(imgURL); err != nil {
 				return "", err
 			}
 			ext = filepath.Ext(imgURL)
@@ -300,7 +299,7 @@ func (f *Fetcher) slurpBytes(codelabSrc, dir, imgURL string, imgBytes []byte) (s
 	crc := crc64.Checksum(b, f.crcTable)
 	file := fmt.Sprintf("%x%s", crc, ext)
 	dst := filepath.Join(dir, file)
-	return file, ioutil.WriteFile(dst, b, 0644)
+	return file, os.WriteFile(dst, b, 0644)
 }
 
 func (f *Fetcher) slurpFragment(url string) ([]nodes.Node, error) {
@@ -427,7 +426,7 @@ func (f *Fetcher) slurpRemoteBytes(url string, n int) ([]byte, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
-	return ioutil.ReadAll(res.Body)
+	return io.ReadAll(res.Body)
 }
 
 // retryGet tries to GET specified url up to n times.
@@ -462,7 +461,7 @@ func retryGet(client *http.Client, url string, n int) (*http.Response, error) {
 				Errors []struct{ Reason string }
 			}
 		}
-		b, _ := ioutil.ReadAll(res.Body)
+		b, _ := io.ReadAll(res.Body)
 		json.Unmarshal(b, &erres)
 		var rateLimit bool
 		for _, e := range erres.Error.Errors {

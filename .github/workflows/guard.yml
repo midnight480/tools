@@ -14,7 +14,7 @@ jobs:
       id-token: write # Required for OIDC
     steps:
       - uses: actions/checkout@v4
-      - uses: flatt-security/setup-takumi-guard-npm@v1
+      - uses: flatt-security/setup-takumi-guard-npm@b32fa78ac6c5507152b0470604b0b546fa2b8521 # v1
         with:
           bot-id: "BT01KMWSJ4TEBJXFM8PDM2EKJ6HJ" # midnight480
       - run: npm install
