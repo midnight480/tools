@@ -24,10 +24,8 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/midnight480/tools/claat/cmd"
 
@@ -53,7 +51,6 @@ var (
 
 func main() {
 	log.SetFlags(0)
-	rand.Seed(time.Now().UnixNano())
 	if len(os.Args) == 1 {
 		log.Fatalf("Need subcommand. Try '-h' for options.")
 	}

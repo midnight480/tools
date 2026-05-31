@@ -14,16 +14,15 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"path"
 
-	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 )
 
@@ -32,17 +31,33 @@ const (
 	scopeDriveReadOnly = "https://www.googleapis.com/auth/drive.readonly"
 
 	// program credentials for installed apps
-	googClient = "183908478743-e8rth9fbo7juk9eeivgp23asnt791g63.apps.googleusercontent.com"
-	googSecret = "ljELuf5jUrzcOxZGL7OQfkIC"
+	// These are loaded from environment variables for security.
+	// Set CLAAT_OAUTH_CLIENT_ID and CLAAT_OAUTH_CLIENT_SECRET.
+	defaultGoogClient = "183908478743-e8rth9fbo7juk9eeivgp23asnt791g63.apps.googleusercontent.com"
+	defaultGoogSecret = "ljELuf5jUrzcOxZGL7OQfkIC"
 
 	// token providers
 	ProviderGoogle = "goog"
 )
 
-var (
-	googleAuthConfig = oauth2.Config{
-		ClientID:     googClient,
-		ClientSecret: googSecret,
+func googClient() string {
+	if v := os.Getenv("CLAAT_OAUTH_CLIENT_ID"); v != "" {
+		return v
+	}
+	return defaultGoogClient
+}
+
+func googSecret() string {
+	if v := os.Getenv("CLAAT_OAUTH_CLIENT_SECRET"); v != "" {
+		return v
+	}
+	return defaultGoogSecret
+}
+
+func newGoogleAuthConfig() *oauth2.Config {
+	return &oauth2.Config{
+		ClientID:     googClient(),
+		ClientSecret: googSecret(),
 		Scopes:       []string{scopeDriveReadOnly},
 		RedirectURL:  "http://localhost:8091",
 		Endpoint: oauth2.Endpoint{
@@ -50,7 +65,7 @@ var (
 			TokenURL: "https://accounts.google.com/o/oauth2/token",
 		},
 	}
-)
+}
 
 // The webserver waits for an oauth code in the three-legged auth flow.
 func startWebServer() (code string, err error) {
@@ -141,17 +156,18 @@ func (h *Helper) tokenSource() (oauth2.TokenSource, error) {
 	}
 
 	// Otherwise, use the Google provider.
+	conf := newGoogleAuthConfig()
 	t, err := readToken(h.provider)
 	if err != nil {
-		t, err = h.opts.authHandler(&googleAuthConfig)
+		t, err = h.opts.authHandler(conf)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("unable to obtain access token for %q", h.provider)
 	}
 	cache := &cachedTokenSource{
-		src:      googleAuthConfig.TokenSource(context.Background(), t),
+		src:      conf.TokenSource(context.Background(), t),
 		provider: h.provider,
-		config:   &googleAuthConfig,
+		config:   conf,
 	}
 	return oauth2.ReuseTokenSource(nil, cache), nil
 }
@@ -161,7 +177,7 @@ func readToken(provider string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	b, err := ioutil.ReadFile(l)
+	b, err := os.ReadFile(l)
 	if err != nil {
 		return nil, err
 	}
