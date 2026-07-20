@@ -512,6 +512,16 @@ func TestImage(t *testing.T) {
 			inNode: nodes.NewImageNode(nodes.NewImageNodeOptions{}),
 			out:    `<img src="">`,
 		},
+		{
+			// A crafted Src/Alt must not be able to break out of the quoted
+			// attribute and inject additional markup or event handlers.
+			name: "Injection",
+			inNode: nodes.NewImageNode(nodes.NewImageNodeOptions{
+				Src: `x" onerror="alert(1)`,
+				Alt: `"><script>alert(1)</script>`,
+			}),
+			out: `<img alt="&#34;&gt;&lt;script&gt;alert(1)&lt;/script&gt;" src="x&#34; onerror=&#34;alert(1)">`,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -588,6 +598,13 @@ func TestURL(t *testing.T) {
 			inNode: nodes.NewURLNode("google.com", nodes.NewHeaderNode(1, nodes.NewTextNode(nodes.NewTextNodeOptions{Value: "foo"})), nodes.NewTextNode(nodes.NewTextNodeOptions{Value: "bar"})),
 			out: `<a href="google.com" target="_blank"><h1 is-upgraded>foo</h1>
 bar</a>`,
+		},
+		{
+			// A crafted URL must not be able to break out of the quoted href
+			// attribute and inject additional markup or event handlers.
+			name:   "Injection",
+			inNode: nodes.NewURLNode(`"><img src=x onerror=alert(1)>`),
+			out:    `<a href="&#34;&gt;&lt;img src=x onerror=alert(1)&gt;" target="_blank"></a>`,
 		},
 	}
 	for _, tc := range tests {
