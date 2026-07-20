@@ -513,14 +513,24 @@ func TestImage(t *testing.T) {
 			out:    `<img src="">`,
 		},
 		{
-			// A crafted Src/Alt must not be able to break out of the quoted
+			// A crafted Src must not be able to break out of the quoted
 			// attribute and inject additional markup or event handlers.
 			name: "Injection",
 			inNode: nodes.NewImageNode(nodes.NewImageNodeOptions{
 				Src: `x" onerror="alert(1)`,
-				Alt: `"><script>alert(1)</script>`,
 			}),
-			out: `<img alt="&#34;&gt;&lt;script&gt;alert(1)&lt;/script&gt;" src="x&#34; onerror=&#34;alert(1)">`,
+			out: `<img src="x&#34; onerror=&#34;alert(1)">`,
+		},
+		{
+			// Alt and Title arrive already HTML-escaped from the parsers, so
+			// the renderer must not escape them a second time.
+			name: "AltTitleNotDoubleEscaped",
+			inNode: nodes.NewImageNode(nodes.NewImageNodeOptions{
+				Src:   "img.png",
+				Alt:   `foo &amp; &#34;bar&#34;`,
+				Title: `a &lt;b&gt;`,
+			}),
+			out: `<img alt="foo &amp; &#34;bar&#34;" title="a &lt;b&gt;" src="img.png">`,
 		},
 	}
 	for _, tc := range tests {

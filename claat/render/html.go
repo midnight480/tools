@@ -180,27 +180,29 @@ func (hw *htmlWriter) text(n *nodes.TextNode) {
 func (hw *htmlWriter) image(n *nodes.ImageNode) {
 	hw.writeString("<img")
 	if n.Alt != "" {
-		hw.writeFmt(" alt=%q", escape(n.Alt))
+		// Alt is already HTML-escaped by the parsers (parser/md, parser/gdoc).
+		hw.writeFmt(" alt=\"%s\"", n.Alt)
 	}
 	if n.Title != "" {
-		hw.writeFmt(" title=%q", escape(n.Title))
+		// Title is already HTML-escaped by the parsers (parser/md, parser/gdoc).
+		hw.writeFmt(" title=\"%s\"", n.Title)
 	}
 	if n.Width > 0 {
 		hw.writeFmt(` style="width: %.2fpx"`, n.Width)
 	}
-	hw.writeFmt(" src=%q>", escape(n.Src))
+	hw.writeFmt(" src=\"%s\">", escape(n.Src))
 }
 
 func (hw *htmlWriter) url(n *nodes.URLNode) {
 	hw.writeString("<a")
 	if n.URL != "" {
-		hw.writeFmt(" href=%q", escape(n.URL))
+		hw.writeFmt(" href=\"%s\"", escape(n.URL))
 	}
 	if n.Name != "" {
-		hw.writeFmt(" name=%q", escape(n.Name))
+		hw.writeFmt(" name=\"%s\"", escape(n.Name))
 	}
 	if n.Target != "" {
-		hw.writeFmt(" target=%q", escape(n.Target))
+		hw.writeFmt(" target=\"%s\"", escape(n.Target))
 	}
 	hw.writeString(">")
 	hw.write(n.Content.Nodes...)
@@ -228,7 +230,7 @@ func (hw *htmlWriter) code(n *nodes.CodeNode) {
 	if !n.Term {
 		hw.writeString("<code")
 		if n.Lang != "" {
-			hw.writeFmt(" language=%q class=%q", escape(n.Lang), escape(n.Lang))
+			hw.writeFmt(" language=\"%s\" class=\"%s\"", escape(n.Lang), escape(n.Lang))
 		}
 		hw.writeString(">")
 	}
@@ -287,10 +289,10 @@ func (hw *htmlWriter) itemsList(n *nodes.ItemsListNode) {
 		hw.writeString(` class="faq"`)
 	default:
 		if n.ListType != "" {
-			hw.writeFmt(" type=%q", escape(n.ListType))
+			hw.writeFmt(" type=\"%s\"", escape(n.ListType))
 		}
 		if n.Start > 0 {
-			hw.writeFmt(` start=%q`, strconv.Itoa(n.Start))
+			hw.writeFmt(` start="%s"`, strconv.Itoa(n.Start))
 		}
 	}
 	hw.writeString(">\n")
@@ -319,13 +321,13 @@ func (hw *htmlWriter) grid(n *nodes.GridNode) {
 }
 
 func (hw *htmlWriter) infobox(n *nodes.InfoboxNode) {
-	hw.writeFmt("<aside class=%q>", escape(string(n.Kind)))
+	hw.writeFmt("<aside class=\"%s\">", escape(string(n.Kind)))
 	hw.write(n.Content.Nodes...)
 	hw.writeString("</aside>")
 }
 
 func (hw *htmlWriter) survey(n *nodes.SurveyNode) {
-	hw.writeFmt("<google-codelab-survey survey-id=%q>\n", escape(n.ID))
+	hw.writeFmt("<google-codelab-survey survey-id=\"%s\">\n", escape(n.ID))
 	for _, g := range n.Groups {
 		hw.writeFmt("<h4>%s</h4>\n<paper-radio-group>\n", escape(g.Name))
 		for _, o := range g.Options {
@@ -360,5 +362,5 @@ func (hw *htmlWriter) youtube(n *nodes.YouTubeNode) {
 }
 
 func (hw *htmlWriter) iframe(n *nodes.IframeNode) {
-	hw.writeFmt(`<iframe class="embedded-iframe" src=%q></iframe>`, escape(n.URL))
+	hw.writeFmt(`<iframe class="embedded-iframe" src="%s"></iframe>`, escape(n.URL))
 }
