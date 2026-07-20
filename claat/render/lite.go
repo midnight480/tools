@@ -34,7 +34,10 @@ func Lite(ctx Context, nodes ...nodes.Node) (htmlTemplate.HTML, error) {
 	if err := WriteLite(&buf, ctx.Env, nodes...); err != nil {
 		return "", err
 	}
-	return htmlTemplate.HTML(buf.String()), nil
+	// WriteLite builds a golang.org/x/net/html node tree and serializes it with
+	// html.Render, which escapes all text and attribute values, so the result
+	// is safe to mark as trusted HTML that must not be re-escaped.
+	return htmlTemplate.HTML(buf.String()), nil //nolint:gosec // G203: markup is escaped by html.Render
 }
 
 // WriteLite does the same as Lite but outputs rendered markup to w.

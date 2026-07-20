@@ -512,6 +512,26 @@ func TestImage(t *testing.T) {
 			inNode: nodes.NewImageNode(nodes.NewImageNodeOptions{}),
 			out:    `<img src="">`,
 		},
+		{
+			// A crafted Src must not be able to break out of the quoted
+			// attribute and inject additional markup or event handlers.
+			name: "Injection",
+			inNode: nodes.NewImageNode(nodes.NewImageNodeOptions{
+				Src: `x" onerror="alert(1)`,
+			}),
+			out: `<img src="x&#34; onerror=&#34;alert(1)">`,
+		},
+		{
+			// Alt and Title arrive already HTML-escaped from the parsers, so
+			// the renderer must not escape them a second time.
+			name: "AltTitleNotDoubleEscaped",
+			inNode: nodes.NewImageNode(nodes.NewImageNodeOptions{
+				Src:   "img.png",
+				Alt:   `foo &amp; &#34;bar&#34;`,
+				Title: `a &lt;b&gt;`,
+			}),
+			out: `<img alt="foo &amp; &#34;bar&#34;" title="a &lt;b&gt;" src="img.png">`,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -588,6 +608,13 @@ func TestURL(t *testing.T) {
 			inNode: nodes.NewURLNode("google.com", nodes.NewHeaderNode(1, nodes.NewTextNode(nodes.NewTextNodeOptions{Value: "foo"})), nodes.NewTextNode(nodes.NewTextNodeOptions{Value: "bar"})),
 			out: `<a href="google.com" target="_blank"><h1 is-upgraded>foo</h1>
 bar</a>`,
+		},
+		{
+			// A crafted URL must not be able to break out of the quoted href
+			// attribute and inject additional markup or event handlers.
+			name:   "Injection",
+			inNode: nodes.NewURLNode(`"><img src=x onerror=alert(1)>`),
+			out:    `<a href="&#34;&gt;&lt;img src=x onerror=alert(1)&gt;" target="_blank"></a>`,
 		},
 	}
 	for _, tc := range tests {
