@@ -1,0 +1,34 @@
+{
+  "id": "FEAT-002",
+  "type": "chore",
+  "description": "Perform an offline static security review of the committed lockfiles and apply only safe, registry-independent dependency vulnerability fixes, then open a single pull request against main. Because registry.npmjs.org is unreachable (see FEAT-001), `npm audit fix` and registry-backed dependency bumps cannot be executed or verified. The deliverable is therefore: (1) an offline static review of site/package-lock.json identifying known-vulnerable transitive packages, (2) any dependency fix that can be made WITHOUT contacting the registry and that keeps the lockfile internally consistent (only if it can be done safely; otherwise leave unaddressed and document), and (3) a PR that clearly documents before/after audit counts (audit could not run -> documented as blocked) and lists offline-identified vulnerabilities left unaddressed with reasons attributing them to the Repository access only network mode. Changes MUST be limited to dependency vulnerability fixes; NO unrelated refactoring or formatting.",
+  "status": "pending",
+  "steps": [
+    "Read site/package-lock.json and site/.snyk. Produce an offline static assessment of known-vulnerable packages/versions in the dependency tree (e.g. inspect pinned transitive versions of commonly-flagged packages). Write the assessment to .agents/tasks/task-npm-security-audit/offline-analysis.md, grouping findings by severity (critical/high/moderate/low) where identifiable, and noting that severities are from static knowledge, not a live `npm audit` run.",
+    "Determine whether any identified fix can be applied WITHOUT registry access. A manifest version bump in package.json alone does NOT update the lockfile's resolved/integrity entries, and new integrity hashes cannot be fetched offline, so a bump cannot be installed or verified. If NO fix can be safely applied offline, make NO dependency edits and record this; do not fabricate integrity hashes and do not run `npm audit fix --force`.",
+    "If (and only if) a genuinely safe, registry-independent fix exists, apply it to the appropriate manifest/lockfile, keep the change minimal and dependency-only, and verify the edited JSON remains valid (`node -e \"require('./site/package-lock.json')\"` or `python -m json.tool`).",
+    "Verify the diff is dependency-only: run `git diff main` and confirm no source/formatting/refactor changes were introduced. Confirm no node_modules is staged.",
+    "Commit the changes (task artifacts + any dependency fix) on branch chore/npm-security-audit-review with a message beginning `chore(security): 依存脆弱性の修正`. Stage specific files by name; do not use `git add -A`.",
+    "Push the branch to origin: `git push -u origin chore/npm-security-audit-review` (NO force-push).",
+    "Create the PR via REST (gh GraphQL is broken here): `gh api repos/midnight480/tools/pulls -f title='chore(security): 依存脆弱性の修正' -f body=\"$(cat <bodyfile>)\" -f head='chore/npm-security-audit-review' -f base='main'`. The PR body MUST contain: a before/after audit count table for critical/high/moderate/low (with the honest note that `npm audit` could not run because registry.npmjs.org is unreachable under the INTEGRATIONS_ONLY / Repository access only network mode, including the exact 403 Forbidden error), the offline static findings summary, and a list of vulnerabilities left unaddressed each with its reason.",
+    "Apply the security label: capture the PR number from the create response, then `gh api repos/midnight480/tools/issues/{pr_number}/labels -f \"labels[]=security\"`.",
+    "Record the PR number, URL, and final status in the feature findings field."
+  ],
+  "acceptance_criteria": [
+    ".agents/tasks/task-npm-security-audit/offline-analysis.md exists and lists statically-identified vulnerabilities grouped by severity with the caveat that no live audit was possible.",
+    "Any dependency change (if present) is limited to vulnerability fixes with no unrelated refactoring/formatting, and edited JSON files are valid; if no safe offline fix exists, no dependency files are modified and this is documented.",
+    "A single pull request against main exists with title exactly `chore(security): 依存脆弱性の修正`.",
+    "The PR body includes before/after audit counts (critical/high/moderate/low) with an explicit, honest statement that npm audit was blocked by the network mode (including the 403 Forbidden evidence), plus the list of unaddressed vulnerabilities and reasons.",
+    "The `security` label is applied to the PR.",
+    "The branch chore/npm-security-audit-review is pushed to origin without force-push."
+  ],
+  "verification": [
+    "Run `git log --oneline -3` and confirm the security commit is present on chore/npm-security-audit-review.",
+    "Run `git diff --name-only main` and confirm only dependency/task-artifact files changed (no unrelated source edits).",
+    "Confirm the PR exists: `gh api repos/midnight480/tools/pulls --jq '.[] | select(.head.ref==\"chore/npm-security-audit-review\") | {number,title,draft}'`.",
+    "Confirm the label: `gh api repos/midnight480/tools/issues/{pr_number}/labels --jq '.[].name'` includes `security`.",
+    "Validate any edited JSON file parses successfully."
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

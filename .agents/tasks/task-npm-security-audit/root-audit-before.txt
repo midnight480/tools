@@ -1,0 +1,215 @@
+=== root/ npm audit evidence ===
+Date: Mon Oct 12 12:18:14 AM UTC 2026
+CWD: /projects/sandbox/tools
+
+=== command: env -u NODE_OPTIONS timeout 60 npm audit --json ===
+npm warn audit 403 Forbidden - POST https://registry.npmjs.org/-/npm/v1/security/advisories/bulk
+npm error audit endpoint returned an error
+{
+  "message": "403 Forbidden - POST https://registry.npmjs.org/-/npm/v1/security/advisories/bulk",
+  "method": "POST",
+  "uri": "https://registry.npmjs.org/-/npm/v1/security/advisories/bulk",
+  "headers": {
+    "server": [
+      "squid/6.13"
+    ],
+    "mime-version": [
+      "1.0"
+    ],
+    "date": [
+      "Mon, 12 Oct 2026 00:18:14 GMT"
+    ],
+    "content-type": [
+      "text/html;charset=utf-8"
+    ],
+    "content-length": [
+      "3082"
+    ],
+    "x-squid-error": [
+      "ERR_ACCESS_DENIED 0"
+    ],
+    "vary": [
+      "Accept-Language"
+    ],
+    "content-language": [
+      "en"
+    ],
+    "cache-status": [
+      "ip-10-1-185-204.ec2.internal"
+    ],
+    "via": [
+      "1.1 ip-10-1-185-204.ec2.internal (squid/6.13)"
+    ],
+    "connection": [
+      "keep-alive"
+    ],
+    "x-fetch-attempts": [
+      "1"
+    ]
+  },
+  "statusCode": 403,
+  "body": "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html><head>\n<meta type=\"copyright\" content=\"Copyright (C) 1996-2024 The Squid Software Foundation and contributors\">\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n<title>ERROR: The requested URL could not be retrieved</title>\n<style type=\"text/css\"><!--\n /*\n * Copyright (C) 1996-2024 The Squid Software Foundation and contributors\n *\n * Squid software is distributed under GPLv2+ license and includes\n * contributions from numerous individuals and organizations.\n * Please see the COPYING and CONTRIBUTORS files for details.\n */\n\n/*\n Stylesheet for Squid Error pages\n Adapted from design by Free CSS Templates\n http://www.freecsstemplates.org\n Released for free under a Creative Commons Attribution 2.5 License\n*/\n\n/* Page basics */\n* {\n\tfont-family: verdana, sans-serif;\n}\n\nhtml body {\n\tmargin: 0;\n\tpadding: 0;\n\tbackground: #efefef;\n\tfont-size: 12px;\n\tcolor: #1e1e1e;\n}\n\n/* Page displayed title area */\n#titles {\n\tmargin-left: 15px;\n\tpadding: 10px;\n\tpadding-left: 100px;\n\tbackground: url('/squid-internal-static/icons/SN.png') no-repeat left;\n}\n\n/* initial title */\n#titles h1 {\n\tcolor: #000000;\n}\n#titles h2 {\n\tcolor: #000000;\n}\n\n/* special event: FTP success page titles */\n#titles ftpsuccess {\n\tbackground-color:#00ff00;\n\twidth:100%;\n}\n\n/* Page displayed body content area */\n#content {\n\tpadding: 10px;\n\tbackground: #ffffff;\n}\n\n/* General text */\np {\n}\n\n/* error brief description */\n#error p {\n}\n\n/* some data which may have caused the problem */\n#data {\n}\n\n/* the error message received from the system or other software */\n#sysmsg {\n}\n\npre {\n}\n\n/* special event: FTP directory listing */\n#dirmsg {\n    font-family: courier, monospace;\n    color: black;\n    font-size: 10pt;\n}\n#dirlisting {\n    margin-left: 2%;\n    margin-right: 2%;\n}\n#dirlisting tr.entry td.icon,td.filename,td.size,td.date {\n    border-bottom: groove;\n}\n#dirlisting td.size {\n    width: 50px;\n    text-align: right;\n    padding-right: 5px;\n}\n\n/* horizontal lines */\nhr {\n\tmargin: 0;\n}\n\n/* page displayed footer area */\n#footer {\n\tfont-size: 9px;\n\tpadding-left: 10px;\n}\n\n\nbody\n:lang(fa) { direction: rtl; font-size: 100%; font-family: Tahoma, Roya, sans-serif; float: right; }\n:lang(he) { direction: rtl; }\n --></style>\n</head><body id=ERR_ACCESS_DENIED>\n<div id=\"titles\">\n<h1>ERROR</h1>\n<h2>The requested URL could not be retrieved</h2>\n</div>\n<hr>\n\n<div id=\"content\">\n<p>The following error was encountered while trying to retrieve the URL: <a href=\"https://registry.npmjs.org/*\">https://registry.npmjs.org/*</a></p>\n\n<blockquote id=\"error\">\n<p><b>Access Denied.</b></p>\n</blockquote>\n\n<p>Access control configuration prevents your request from being allowed at this time. Please contact your service provider if you feel this is incorrect.</p>\n\n<p>Your cache administrator is <a href=\"mailto:root\">root</a>.</p>\n<br>\n</div>\n\n<hr>\n<div id=\"footer\">\n<p>Generated Mon, 12 Oct 2026 00:18:14 GMT by ip-10-1-185-204.ec2.internal (squid/6.13)</p>\n<!-- ERR_ACCESS_DENIED -->\n</div>\n</body></html>\n",
+  "error": {
+    "summary": "",
+    "detail": ""
+  }
+}
+npm error A complete log of this run can be found in: /root/.npm/_logs/2026-10-12T00_18_14_473Z-debug-0.log
+exit=1
+
+=== command: env -u NODE_OPTIONS timeout 60 npm audit ===
+npm warn audit 403 Forbidden - POST https://registry.npmjs.org/-/npm/v1/security/advisories/bulk
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+<meta type="copyright" content="Copyright (C) 1996-2024 The Squid Software Foundation and contributors">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ERROR: The requested URL could not be retrieved</title>
+<style type="text/css"><!--
+ /*
+ * Copyright (C) 1996-2024 The Squid Software Foundation and contributors
+ *
+ * Squid software is distributed under GPLv2+ license and includes
+ * contributions from numerous individuals and organizations.
+ * Please see the COPYING and CONTRIBUTORS files for details.
+ */
+
+/*
+ Stylesheet for Squid Error pages
+ Adapted from design by Free CSS Templates
+ http://www.freecsstemplates.org
+ Released for free under a Creative Commons Attribution 2.5 License
+*/
+
+/* Page basics */
+* {
+	font-family: verdana, sans-serif;
+}
+
+html body {
+	margin: 0;
+	padding: 0;
+	background: #efefef;
+	font-size: 12px;
+	color: #1e1e1e;
+}
+
+/* Page displayed title area */
+#titles {
+	margin-left: 15px;
+	padding: 10px;
+	padding-left: 100px;
+	background: url('/squid-internal-static/icons/SN.png') no-repeat left;
+}
+
+/* initial title */
+#titles h1 {
+	color: #000000;
+}
+#titles h2 {
+	color: #000000;
+}
+
+/* special event: FTP success page titles */
+#titles ftpsuccess {
+	background-color:#00ff00;
+	width:100%;
+}
+
+/* Page displayed body content area */
+#content {
+	padding: 10px;
+	background: #ffffff;
+}
+
+/* General text */
+p {
+}
+
+/* error brief description */
+#error p {
+}
+
+/* some data which may have caused the problem */
+#data {
+}
+
+/* the error message received from the system or other software */
+#sysmsg {
+}
+
+pre {
+}
+
+/* special event: FTP directory listing */
+#dirmsg {
+    font-family: courier, monospace;
+    color: black;
+    font-size: 10pt;
+}
+#dirlisting {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+#dirlisting tr.entry td.icon,td.filename,td.size,td.date {
+    border-bottom: groove;
+}
+#dirlisting td.size {
+    width: 50px;
+    text-align: right;
+    padding-right: 5px;
+}
+
+/* horizontal lines */
+hr {
+	margin: 0;
+}
+
+/* page displayed footer area */
+#footer {
+	font-size: 9px;
+	padding-left: 10px;
+}
+
+
+body
+:lang(fa) { direction: rtl; font-size: 100%; font-family: Tahoma, Roya, sans-serif; float: right; }
+:lang(he) { direction: rtl; }
+ --></style>
+</head><body id=ERR_ACCESS_DENIED>
+<div id="titles">
+<h1>ERROR</h1>
+<h2>The requested URL could not be retrieved</h2>
+</div>
+<hr>
+
+<div id="content">
+<p>The following error was encountered while trying to retrieve the URL: <a href="https://registry.npmjs.org/*">https://registry.npmjs.org/*</a></p>
+
+<blockquote id="error">
+<p><b>Access Denied.</b></p>
+</blockquote>
+
+<p>Access control configuration prevents your request from being allowed at this time. Please contact your service provider if you feel this is incorrect.</p>
+
+<p>Your cache administrator is <a href="mailto:root">root</a>.</p>
+<br>
+</div>
+
+<hr>
+<div id="footer">
+<p>Generated Mon, 12 Oct 2026 00:18:14 GMT by ip-10-1-188-151.ec2.internal (squid/6.13)</p>
+<!-- ERR_ACCESS_DENIED -->
+</div>
+</body></html>
+
+npm error audit endpoint returned an error
+npm error A complete log of this run can be found in: /root/.npm/_logs/2026-10-12T00_18_14_797Z-debug-0.log
+exit=1
+
+=== command: env -u NODE_OPTIONS timeout 60 npm audit --offline ===
+found 0 vulnerabilities
+exit=0
+
+=== direct registry reachability: curl -s -o /dev/null -w %{http_code} https://registry.npmjs.org/ ===
+000
+curl-exit=7

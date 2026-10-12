@@ -1,0 +1,26 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Establish baseline and attempt the standard npm security audit workflow in both npm projects (root and site/), capturing exact command output so the network constraint and any obtainable audit data are recorded as evidence for the PR body. This feature does NOT modify dependencies; it only runs/attempts the audit and records results. All npm invocations MUST be prefixed with `env -u NODE_OPTIONS` due to the proxy-bootstrap preload quirk.",
+  "status": "completed",
+  "steps": [
+    "Create and switch to a NEW git branch off main named `chore/npm-security-audit-review` in /projects/sandbox/tools (do NOT reuse closed branches chore/npm-security-vulnerabilities or chore/npm-security-audit-refresh). Confirm `git status` is clean before branching.",
+    "In /projects/sandbox/tools/site run `env -u NODE_OPTIONS npm audit --json` and `env -u NODE_OPTIONS npm audit` with a timeout (e.g. `timeout 60`). Save the full stdout+stderr to .agents/tasks/task-npm-security-audit/site-audit-before.txt. Expect HTTP 403 Forbidden from the Squid proxy on POST /-/npm/v1/security/advisories/bulk (registry.npmjs.org unreachable).",
+    "In /projects/sandbox/tools (root) run the same `env -u NODE_OPTIONS npm audit` and save to .agents/tasks/task-npm-security-audit/root-audit-before.txt.",
+    "Attempt `env -u NODE_OPTIONS timeout 120 npm install --no-audit --no-fund --loglevel=error` in site/ and separately in root/; capture the outcome (hang/timeout or ENOTCACHED under --offline) to .agents/tasks/task-npm-security-audit/install-attempt.txt. Do NOT leave hung npm/node processes running (pkill if needed). Do NOT commit node_modules (it is .gitignore'd).",
+    "Record in the feature `findings` field: the exact audit error (403 Forbidden / Squid), that registry.npmjs.org is unreachable (curl returns 000), that `npm install` cannot complete and `npm install --offline` fails with ENOTCACHED, and therefore `npm audit`/`npm audit fix` cannot produce real before/after counts. Note that offline-only `npm audit --offline` reports '0 vulnerabilities' which is NOT a valid result (no advisory DB offline)."
+  ],
+  "acceptance_criteria": [
+    "A new branch chore/npm-security-audit-review exists and is checked out.",
+    "site-audit-before.txt, root-audit-before.txt, and install-attempt.txt exist under .agents/tasks/task-npm-security-audit/ and contain the captured command output.",
+    "The feature findings field documents the exact network error (403 Forbidden from Squid / registry unreachable) and that the audit/fix/install workflow is blocked.",
+    "No node_modules directories are staged for commit; working tree contains only the branch and the task artifact files."
+  ],
+  "verification": [
+    "Run `git branch --show-current` and confirm it prints chore/npm-security-audit-review.",
+    "Confirm the three *.txt evidence files exist and are non-empty.",
+    "Run `git status --short` and confirm node_modules is not staged."
+  ],
+  "blocked_reason": null,
+  "findings": "Baseline audit workflow attempted in both npm projects on new branch chore/npm-security-audit-review (off main; clean tree before branching). Evidence captured in .agents/tasks/task-npm-security-audit/{site-audit-before.txt, root-audit-before.txt, install-attempt.txt}. Confirmed network constraint (INTEGRATIONS_ONLY): (1) `env -u NODE_OPTIONS npm audit [--json]` in BOTH site/ and root/ returns HTTP 403 Forbidden on POST https://registry.npmjs.org/-/npm/v1/security/advisories/bulk, served by Squid proxy (server: squid/6.13, x-squid-error: ERR_ACCESS_DENIED 0, statusCode 403); npm prints 'audit endpoint returned an error' and exits 1. (2) Direct reachability check `curl https://registry.npmjs.org/` returns HTTP code 000 with curl exit 7 (connection failure) — registry is unreachable, not just the audit endpoint. (3) `npm install --no-audit --no-fund` in site/ HANGS on the unreachable registry (killed by `timeout -s KILL 75`, exit 137 after 75s); in root/ it fails fast with E403 Forbidden on GET https://registry.npmjs.org/@bazel/bazelisk/-/bazelisk-1.19.0.tgz. (4) `npm install --offline` fails with ENOTCACHED in both projects (site/: @types/vinyl tarball; root/: @bazel/bazelisk tarball) — 'cache mode is only-if-cached but no cached response is available'. (5) `npm audit --offline` prints 'found 0 vulnerabilities' (exit 0) in both projects, which is NOT a valid result: there is no advisory DB available offline, so it reports zero by default. CONCLUSION: `npm audit`, `npm audit fix`, and registry-backed `npm install` CANNOT run in this sandbox, so real before/after vulnerability counts (critical/high/moderate/low) cannot be produced. No dependencies were modified in this feature. No node_modules directories staged (node_modules is .gitignore'd in both projects). This evidence must be summarized honestly in the PR body (FEAT-002). NODE_OPTIONS preload quirk confirmed: all npm invocations prefixed with `env -u NODE_OPTIONS`; use `timeout -s KILL` for registry-touching commands since plain SIGTERM/`timeout` does not stop npm's child node processes (first unprefixed `timeout 120` attempt left a hung process that had to be pkill'd)."
+}

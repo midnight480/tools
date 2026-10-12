@@ -1,0 +1,7 @@
+{
+  "task_id": "task-npm-security-audit",
+  "task_description": "Inspect and fix dependency security vulnerabilities in midnight480/tools npm projects (root + site/), then open a single PR against main titled 'chore(security): 依存脆弱性の修正' with the 'security' label, summarizing before/after npm audit counts and listing any unaddressed vulnerabilities with reasons. The npm registry is unreachable under the INTEGRATIONS_ONLY network mode, so the audit/fix/install workflow cannot run; the deliverable is an offline static review plus a PR that honestly documents the constraint and any registry-independent fixes.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}

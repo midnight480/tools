@@ -1,0 +1,31 @@
+=== npm install attempt evidence ===
+Date: Mon Oct 12 12:27:28 AM UTC 2026
+Network mode: INTEGRATIONS_ONLY (registry.npmjs.org unreachable)
+
+### site/ : env -u NODE_OPTIONS timeout -s KILL 75 npm install --no-audit --no-fund --loglevel=error
+(node:375) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 socket listeners added to [ClientRequest]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+exit=137 (137 => SIGKILL after timeout => hung on unreachable registry; elapsed=75s)
+
+### site/ : env -u NODE_OPTIONS timeout -s KILL 60 npm install --offline --no-audit --no-fund --loglevel=error
+npm error code ENOTCACHED
+npm error request to https://registry.npmjs.org/@types/vinyl/-/vinyl-2.0.12.tgz failed: cache mode is 'only-if-cached' but no cached response is available.
+npm error A complete log of this run can be found in: /root/.npm/_logs/2026-10-12T00_28_43_219Z-debug-0.log
+exit=1 (elapsed=1s)
+
+### root/ : env -u NODE_OPTIONS timeout -s KILL 75 npm install --no-audit --no-fund --loglevel=error
+npm error code E403
+npm error 403 403 Forbidden - GET https://registry.npmjs.org/@bazel/bazelisk/-/bazelisk-1.19.0.tgz
+npm error 403 In most cases, you or one of your dependencies are requesting
+npm error 403 a package version that is forbidden by your security policy, or
+npm error 403 on a server you do not have access to.
+npm error A complete log of this run can be found in: /root/.npm/_logs/2026-10-12T00_28_51_118Z-debug-0.log
+exit=1 (E403 Forbidden on tarball GET; registry blocked by Squid proxy; elapsed=0s)
+
+### root/ : env -u NODE_OPTIONS timeout -s KILL 60 npm install --offline --no-audit --no-fund --loglevel=error
+npm error code ENOTCACHED
+npm error request to https://registry.npmjs.org/@bazel/bazelisk/-/bazelisk-1.19.0.tgz failed: cache mode is 'only-if-cached' but no cached response is available.
+npm error A complete log of this run can be found in: /root/.npm/_logs/2026-10-12T00_28_51_463Z-debug-0.log
+exit=1 (elapsed=0s)
+
+=== probe complete ===

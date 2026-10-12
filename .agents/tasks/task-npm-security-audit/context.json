@@ -1,0 +1,23 @@
+{
+  "project_type": "Fork of googlecodelabs/tools (claat / codelab-elements). Two npm projects: root (Bazel wrapper) and site/ (gulp-based static site build toolchain). Also contains a Go module under claat/.",
+  "language": "JavaScript/Node (site build tooling), Go (claat), Bazel (root build).",
+  "build_system": "Root package.json scripts shell out to Bazel via @bazel/bazelisk (node_modules/.bin/bazel). site/ uses gulp (site/gulpfile.js). Bazelisk 1.26.0 is installed at /usr/local/bin/bazel. Go 1.25.1 installed via mise.",
+  "test_framework": "Root: Bazel test target codelab-elements/demo:hello_test. site/: gulp tasks (no dedicated unit test runner wired to `npm test`; site has no `test` script). Go: `go test` under claat/.",
+  "build_command": "Root: `npm run build` -> `node_modules/.bin/bazel build npm_dist` (requires root node_modules with @bazel/bazelisk, which is NOT installed and cannot be installed offline). site/: `gulp` tasks via site/gulpfile.js.",
+  "test_command": "Root: `npm test` -> bazel test codelab-elements/demo:hello_test. site/ package.json has NO `test` script. Go: `go test ./...` under claat/.",
+  "verification_instructions": "The task is a dependency security audit of npm packages. Normal verification = run `npm audit` before/after, `npm install`, build, test. In THIS sandbox the npm registry (registry.npmjs.org) is UNREACHABLE: `npm audit` -> HTTP 403 Forbidden from Squid proxy on POST /-/npm/v1/security/advisories/bulk; `npm install` hangs on unreachable registry (curl to registry returns 000/connection-refused); `npm install --offline` fails with ENOTCACHED. Therefore the audit/fix/install workflow cannot be executed. Verification is limited to: (a) offline static review of committed lockfiles, (b) `git diff` review that changes are dependency-only, (c) JSON validity of any edited manifest/lockfile.",
+  "snapshot_or_generated_files": "node_modules is .gitignore'd (not committed). site/package-lock.json (~558KB, 15391 lines) and root package-lock.json are committed. claat/go.mod and claat/go.sum are committed.",
+  "setup_instructions": "Normally: `cd site && npm install`. BLOCKED in sandbox (no registry access, no npm cache for all deps). A partial node_modules (~846 pkgs) exists in site/ from the environment image but is incomplete and cannot be completed offline.",
+  "environment_constraints": "NETWORK MODE = INTEGRATIONS_ONLY (Repository access only). registry.npmjs.org is NOT reachable: npm audit -> 403 Forbidden (Squid), npm install hangs, npm install --offline -> ENOTCACHED, direct curl to registry -> connection failure (000). Consequence: `npm audit`, `npm audit fix`, and registry-backed `npm install` CANNOT run. Any lockfile dependency bump cannot be resolved/verified offline because new integrity hashes require registry access. NODE_OPTIONS preload quirk: bare `npm` fails with \"Cannot find module '/opt/amazon/kiro-agent/proxy-bootstrap.js'\"; MUST prefix npm invocations with `env -u NODE_OPTIONS`. gh is available; gh GraphQL subcommands (gh pr create) fail -> create PR via REST: `gh api repos/midnight480/tools/pulls -f title=... -f body=... -f head=... -f base=main`. Apply label via `gh api repos/midnight480/tools/issues/{pr}/labels -f \"labels[]=security\"`. Push to a NEW branch; do not force-push; do not reuse closed branches (chore/npm-security-vulnerabilities #8, chore/npm-security-audit-refresh #11 are both CLOSED).",
+  "contribution_requirements": "CONTRIBUTING.md: all submissions via GitHub pull requests; Google CLA referenced (process-level, not a code gate). Change must be limited to dependency vulnerability fixes only; NO unrelated refactoring or formatting.",
+  "key_patterns": "site/.snyk policy file exists with lodash patch entries (jscs > lodash chains) and empty ignore map. site/package.json has snyk-protect prepublish hook and @snyk/protect dependency. Prior attempts (commits 775f336, baa62fe) already documented the network-blocked audit and fixed a lockfile integrity mismatch + goldmark Go advisory GO-2026-5320.",
+  "relevant_files": [
+    "/projects/sandbox/tools/site/package.json",
+    "/projects/sandbox/tools/site/package-lock.json",
+    "/projects/sandbox/tools/site/.snyk",
+    "/projects/sandbox/tools/package.json",
+    "/projects/sandbox/tools/package-lock.json",
+    "/projects/sandbox/tools/CONTRIBUTING.md"
+  ],
+  "directory_structure": "Root: package.json + package-lock.json (Bazel wrapper), WORKSPACE/BUILD.bazel, claat/ (Go module), site/ (gulp site builder with its own package.json + large package-lock.json + .snyk + gulpfile.js), codelab-elements/ (Bazel elements)."
+}
