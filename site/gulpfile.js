@@ -9,35 +9,32 @@ const closureCompilerPackage = require('google-closure-compiler');
 const closureCompiler = closureCompilerPackage.gulp();
 const crisper = require('gulp-crisper');
 const gulpif = require('gulp-if');
-const htmlmin = require('gulp-htmlmin');
+const htmlmin = require('gulp-html-minifier-terser');
 const merge = require('merge-stream');
-const postcss = require('gulp-html-postcss');
+const postcss = require('./tasks/helpers/inline-postcss');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass')(require('sass'));
+const serve = require('./tasks/helpers/serve');
 const through = require('through2');
 const useref = require('gulp-useref');
 const vulcanize = require('gulp-vulcanize');
-const watch = require('gulp-watch');
-const webserver = require('gulp-webserver');
 
 // Uglify ES6
-const uglifyes = require('uglify-es');
+const uglifyjs = require('uglify-js');
 const composer = require('gulp-uglify/composer');
-const uglify = composer(uglifyes, console);
+const uglify = composer(uglifyjs, console);
 
 // Other helpers
 const args = require('yargs').argv;
 const childprocess = require('child_process');
 const claat = require('./tasks/helpers/claat');
-const del = require('del');
 const fs = require('fs-extra');
 const gcs = require('./tasks/helpers/gcs');
 const glob = require('glob');
+const nunjucks = require('nunjucks');
 const opts = require('./tasks/helpers/opts');
 const path = require('path');
-const serveStatic = require('serve-static');
 const spawn = childprocess.spawn;
-const swig = require('swig-templates');
 const url = require('url');
 
 // DEFAULT_GA is the default Google Analytics tracker ID
@@ -92,18 +89,18 @@ const VIEWS_FILTER = args.viewsFilter || '*';
 
 // clean:build removes the build directory
 gulp.task('clean:build', (callback) => {
-  return del.deleteAsync('build')
+  return fs.remove('build')
 });
 
 // clean:dist removes the dist directory
 gulp.task('clean:dist', (callback) => {
-  return del.deleteAsync('dist')
+  return fs.remove('dist')
 });
 
 // clean:js removes the built javascript
 // NOTE: this is not included in the default 'clean' task
 gulp.task('clean:js', (callback) => {
-  return del.deleteAsync('app/js/bundle')
+  return fs.remove('app/js/bundle')
 });
 
 // clean removes all built files
@@ -342,8 +339,7 @@ gulp.task('serve', gulp.series(
   gulp.parallel(
     'watch',
     () => {
-      return gulp.src('build')
-        .pipe(webserver(opts.webserver()));
+      return serve('build', opts.server());
     }
   )
 ));
@@ -352,8 +348,7 @@ gulp.task('serve', gulp.series(
 // support live-reloading and should be used to verify final output before
 // publishing.
 gulp.task('serve:dist', gulp.series('dist', () => {
-  return gulp.src('dist')
-    .pipe(webserver(opts.webserver()));
+  return serve('dist', opts.server());
 }));
 
 //
@@ -584,7 +579,7 @@ const generateView = () => {
       levelledCategory: viewFuncs.levelledCategory(),
     };
 
-    const html = swig.render(template.toString(), { locals: locals });
+    const html = nunjucks.renderString(template.toString(), locals);
     file.contents = new Buffer.from(html);
     file.base = __dirname;
     file.path = viewFilename(viewId);
