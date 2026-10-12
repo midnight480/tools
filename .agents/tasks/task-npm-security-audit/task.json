@@ -1,7 +1,14 @@
 {
   "task_id": "task-npm-security-audit",
   "task_description": "Inspect and fix dependency security vulnerabilities in midnight480/tools npm projects (root + site/), then open a single PR against main titled 'chore(security): 依存脆弱性の修正' with the 'security' label, summarizing before/after npm audit counts and listing any unaddressed vulnerabilities with reasons. The npm registry is unreachable under the INTEGRATIONS_ONLY network mode, so the audit/fix/install workflow cannot run; the deliverable is an offline static review plus a PR that honestly documents the constraint and any registry-independent fixes.",
-  "status": "in_progress",
+  "status": "completed",
   "feature_order": ["FEAT-001", "FEAT-002"],
-  "blocked_reason": null
+  "blocked_reason": null,
+  "verification": {
+    "build": "skipped",
+    "tests": "skipped",
+    "test_quality": "skipped",
+    "docker_build": "skipped",
+    "summary": "No code or dependency-file changes were made (diff is task-artifact documentation only), so there is nothing to build, test, or break. The project's build/test commands cannot run regardless: root `npm run build`/`npm test` shell out to Bazel via @bazel/bazelisk and `npm install` needs registry.npmjs.org, which is unreachable under the INTEGRATIONS_ONLY network mode (npm audit -> 403 Forbidden via Squid; root install -> E403 on the @bazel/bazelisk tarball; curl -> 000; offline install -> ENOTCACHED). Verification performed: git diff vs main is limited to .agents/tasks artifacts (no source/formatting/refactor edits, no node_modules staged); PR #12 is open against main with exact title 'chore(security): 依存脆弱性の修正'; the 'security' label is applied. The PR body honestly documents that npm audit could not run (no fabricated before/after counts), provides an offline static vulnerability assessment of site/package-lock.json, and lists all findings as 未対応 with reasons attributed to the network mode."
+  }
 }
