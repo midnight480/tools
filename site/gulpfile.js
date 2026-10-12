@@ -9,35 +9,32 @@ const closureCompilerPackage = require('google-closure-compiler');
 const closureCompiler = closureCompilerPackage.gulp();
 const crisper = require('gulp-crisper');
 const gulpif = require('gulp-if');
-const htmlmin = require('gulp-htmlmin');
-const merge = require('merge-stream');
-const postcss = require('gulp-html-postcss');
+const htmlmin = require('gulp-html-minifier-terser');
+const postcss = require('./tasks/helpers/inline-postcss');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass')(require('sass'));
+const serve = require('./tasks/helpers/serve');
 const through = require('through2');
 const useref = require('gulp-useref');
 const vulcanize = require('gulp-vulcanize');
-const watch = require('gulp-watch');
-const webserver = require('gulp-webserver');
 
 // Uglify ES6
-const uglifyes = require('uglify-es');
+const uglifyjs = require('uglify-js');
 const composer = require('gulp-uglify/composer');
-const uglify = composer(uglifyes, console);
+const uglify = composer(uglifyjs, console);
 
 // Other helpers
+const { once } = require('events');
 const args = require('yargs').argv;
 const childprocess = require('child_process');
 const claat = require('./tasks/helpers/claat');
-const del = require('del');
 const fs = require('fs-extra');
 const gcs = require('./tasks/helpers/gcs');
 const glob = require('glob');
+const nunjucks = require('nunjucks');
 const opts = require('./tasks/helpers/opts');
 const path = require('path');
-const serveStatic = require('serve-static');
 const spawn = childprocess.spawn;
-const swig = require('swig-templates');
 const url = require('url');
 
 // DEFAULT_GA is the default Google Analytics tracker ID
@@ -92,18 +89,18 @@ const VIEWS_FILTER = args.viewsFilter || '*';
 
 // clean:build removes the build directory
 gulp.task('clean:build', (callback) => {
-  return del.deleteAsync('build')
+  return fs.remove('build')
 });
 
 // clean:dist removes the dist directory
 gulp.task('clean:dist', (callback) => {
-  return del.deleteAsync('dist')
+  return fs.remove('dist')
 });
 
 // clean:js removes the built javascript
 // NOTE: this is not included in the default 'clean' task
 gulp.task('clean:js', (callback) => {
-  return del.deleteAsync('app/js/bundle')
+  return fs.remove('app/js/bundle')
 });
 
 // clean removes all built files
@@ -143,8 +140,8 @@ gulp.task('build:html', () => {
     .pipe(generateView())
     .pipe(useref({ searchPath: ['app'] }))
     .pipe(gulpif('*.js', babel(opts.babel())))
-    .pipe(gulp.dest('build'))
     .pipe(gulpif(['*.html', '!index.html'], generateDirectoryIndex()))
+    .pipe(gulp.dest('build'))
   );
 
   streams.push(gulp.src(`app/views/${VIEWS_FILTER}/*.{css,gif,jpeg,jpg,png,svg,tff}`, { base: 'app/views' })
@@ -160,7 +157,7 @@ gulp.task('build:html', () => {
     .pipe(gulp.dest('build'))
   );
 
-  return merge(...streams);
+  return runStreams(streams);
 });
 
 // build:images builds all the images into the build directory.
@@ -203,7 +200,7 @@ gulp.task('build:js', (callback) => {
     .pipe(gulp.dest('build'))
   );
 
-  return merge(...streams);
+  return runStreams(streams);
 });
 
 gulp.task('build:elements_js', () => {
@@ -342,8 +339,7 @@ gulp.task('serve', gulp.series(
   gulp.parallel(
     'watch',
     () => {
-      return gulp.src('build')
-        .pipe(webserver(opts.webserver()));
+      return serve('build', opts.server());
     }
   )
 ));
@@ -352,8 +348,7 @@ gulp.task('serve', gulp.series(
 // support live-reloading and should be used to verify final output before
 // publishing.
 gulp.task('serve:dist', gulp.series('dist', () => {
-  return gulp.src('dist')
-    .pipe(webserver(opts.webserver()));
+  return serve('dist', opts.server());
 }));
 
 //
@@ -377,6 +372,18 @@ gulp.task('codelabs:export', (callback) => {
 //
 // Helpers
 //
+
+// runStreams runs all the given streams and resolves when every stream has
+// ended. It is used instead of merge-stream, which races with vinyl-fs
+// destination pipelines on newer Node.js versions.
+const runStreams = (streams) => {
+  return Promise.all(streams.map((stream) => {
+    return Promise.race([
+      once(stream, 'end'),
+      once(stream, 'error').then(([err]) => { throw err; }),
+    ]);
+  }));
+};
 
 // gulpdebug is a helper for debugging gulp pipeline transforms. It logs the
 // file path and then invokes the callback.
@@ -504,30 +511,15 @@ const collectMetadata = () => {
 // Then the server can be configured to serve indexes and /foo will render
 // properly.
 const generateDirectoryIndex = () => {
-  return through.obj((file, enc, callback) => {
-    const srcPath = file.path;
-    if (srcPath.match(/\.html$/) && fs.existsSync(srcPath)) {
-      const dstPath = srcPath.replace(/\.html$/, '') + '/index.html';
-      const dstPathDir = path.dirname(dstPath);
-      const srcPathRel = path.relative(dstPathDir, srcPath);
-
-      // Ensure directory exists
-      fs.mkdirpSync(dstPathDir);
-
-      // Change into the directory and create a relative symlink
-      chdir(dstPathDir, () => {
-        fs.ensureSymlinkSync(srcPathRel, 'index.html');
-      });
+  return through.obj(function (file, enc, callback) {
+    if (file.isNull() || !file.path.match(/\.html$/)) {
+      return callback(null, file);
     }
+    const index = file.clone();
+    index.path = file.path.replace(/\.html$/, '/index.html');
+    this.push(index);
     callback(null, file);
   });
-}
-
-const chdir = (dir, callback) => {
-  const cwd = process.cwd();
-  process.chdir(dir);
-  callback()
-  process.chdir(cwd);
 }
 
 // generateView creates an index for the given view and codelabs data.
@@ -584,7 +576,7 @@ const generateView = () => {
       levelledCategory: viewFuncs.levelledCategory(),
     };
 
-    const html = swig.render(template.toString(), { locals: locals });
+    const html = nunjucks.renderString(template.toString(), locals);
     file.contents = new Buffer.from(html);
     file.base = __dirname;
     file.path = viewFilename(viewId);
