@@ -10,7 +10,6 @@ const closureCompiler = closureCompilerPackage.gulp();
 const crisper = require('gulp-crisper');
 const gulpif = require('gulp-if');
 const htmlmin = require('gulp-html-minifier-terser');
-const merge = require('merge-stream');
 const postcss = require('./tasks/helpers/inline-postcss');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass')(require('sass'));
@@ -25,6 +24,7 @@ const composer = require('gulp-uglify/composer');
 const uglify = composer(uglifyjs, console);
 
 // Other helpers
+const { once } = require('events');
 const args = require('yargs').argv;
 const childprocess = require('child_process');
 const claat = require('./tasks/helpers/claat');
@@ -140,8 +140,8 @@ gulp.task('build:html', () => {
     .pipe(generateView())
     .pipe(useref({ searchPath: ['app'] }))
     .pipe(gulpif('*.js', babel(opts.babel())))
-    .pipe(gulp.dest('build'))
     .pipe(gulpif(['*.html', '!index.html'], generateDirectoryIndex()))
+    .pipe(gulp.dest('build'))
   );
 
   streams.push(gulp.src(`app/views/${VIEWS_FILTER}/*.{css,gif,jpeg,jpg,png,svg,tff}`, { base: 'app/views' })
@@ -157,7 +157,7 @@ gulp.task('build:html', () => {
     .pipe(gulp.dest('build'))
   );
 
-  return merge(...streams);
+  return runStreams(streams);
 });
 
 // build:images builds all the images into the build directory.
@@ -200,7 +200,7 @@ gulp.task('build:js', (callback) => {
     .pipe(gulp.dest('build'))
   );
 
-  return merge(...streams);
+  return runStreams(streams);
 });
 
 gulp.task('build:elements_js', () => {
@@ -373,6 +373,18 @@ gulp.task('codelabs:export', (callback) => {
 // Helpers
 //
 
+// runStreams runs all the given streams and resolves when every stream has
+// ended. It is used instead of merge-stream, which races with vinyl-fs
+// destination pipelines on newer Node.js versions.
+const runStreams = (streams) => {
+  return Promise.all(streams.map((stream) => {
+    return Promise.race([
+      once(stream, 'end'),
+      once(stream, 'error').then(([err]) => { throw err; }),
+    ]);
+  }));
+};
+
 // gulpdebug is a helper for debugging gulp pipeline transforms. It logs the
 // file path and then invokes the callback.
 const gulpdebug = () => {
@@ -499,30 +511,15 @@ const collectMetadata = () => {
 // Then the server can be configured to serve indexes and /foo will render
 // properly.
 const generateDirectoryIndex = () => {
-  return through.obj((file, enc, callback) => {
-    const srcPath = file.path;
-    if (srcPath.match(/\.html$/) && fs.existsSync(srcPath)) {
-      const dstPath = srcPath.replace(/\.html$/, '') + '/index.html';
-      const dstPathDir = path.dirname(dstPath);
-      const srcPathRel = path.relative(dstPathDir, srcPath);
-
-      // Ensure directory exists
-      fs.mkdirpSync(dstPathDir);
-
-      // Change into the directory and create a relative symlink
-      chdir(dstPathDir, () => {
-        fs.ensureSymlinkSync(srcPathRel, 'index.html');
-      });
+  return through.obj(function (file, enc, callback) {
+    if (file.isNull() || !file.path.match(/\.html$/)) {
+      return callback(null, file);
     }
+    const index = file.clone();
+    index.path = file.path.replace(/\.html$/, '/index.html');
+    this.push(index);
     callback(null, file);
   });
-}
-
-const chdir = (dir, callback) => {
-  const cwd = process.cwd();
-  process.chdir(dir);
-  callback()
-  process.chdir(cwd);
 }
 
 // generateView creates an index for the given view and codelabs data.
